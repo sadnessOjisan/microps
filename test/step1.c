@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     }
     while (!terminate)
     {
+        // Q: struct net_device *dev, uint16_t type, const uint8_t *data, size_t len, const void *dst との対応がわからない
         if (net_device_output(dev, 0x0800, test_data, sizeof(test_data), NULL) == -1)
         {
             errorf("net_device_output() failure");

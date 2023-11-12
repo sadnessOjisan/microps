@@ -17,6 +17,7 @@ dummy_transmit(struct net_device *dev, uint16_t type, const uint8_t *data, size_
 }
 
 static struct net_device_ops dummy_ops = {
+    // Q: open/closeは定義しなくて良いの？
     .transmit = dummy_transmit,
 };
 
@@ -35,6 +36,7 @@ dummy_init(void)
     dev->mtu = DUMMY_MTU;
     dev->hlen = 0; /* non header */
     dev->alen = 0; /* non address */
+    // setter ぽくやらずまるごと関数を構造体に紐付けられない？登録し忘れたら事故じゃない？
     dev->ops = &dummy_ops;
     if (net_device_register(dev) == -1)
     {
