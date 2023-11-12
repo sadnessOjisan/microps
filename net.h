@@ -20,6 +20,7 @@
 
 #define NET_DEVICE_ADDR_LEN 16
 
+// Q: この flags & はどういう役割？
 #define NET_DEVICE_IS_UP(x) ((x)->flags & NET_DEVICE_FLAG_UP)
 #define NET_DEVICE_STATE(x) (NET_DEVICE_IS_UP(x) ? "up" : "down")
 
@@ -39,10 +40,12 @@ struct net_device
         uint8_t peer[NET_DEVICE_ADDR_LEN];
         uint8_t broadcast[NET_DEVICE_ADDR_LEN];
     };
+    // Q: ops は何の略？
     struct net_device_ops *ops;
     void *priv;
 };
 
+// Q: 構造体に関数を登録する方法を調べる
 struct net_device_ops
 {
     int (*open)(struct net_device *dev);
