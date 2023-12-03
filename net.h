@@ -40,7 +40,6 @@ struct net_device
         uint8_t peer[NET_DEVICE_ADDR_LEN];
         uint8_t broadcast[NET_DEVICE_ADDR_LEN];
     };
-    // Q: ops は何の略？
     struct net_device_ops *ops;
     void *priv;
 };

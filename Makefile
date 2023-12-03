@@ -8,6 +8,8 @@ OBJS = util.o \
 TESTS = test/step0.exe \
         test/step1.exe \
 
+# 外から与えられているものによるのでdefaultの規格。外部に依存する。
+# -std=c99 のようなものがあった方が良い
 CFLAGS := $(CFLAGS) -g -W -Wall -Wno-unused-parameter -iquote .
 
 ifeq ($(shell uname),Linux)

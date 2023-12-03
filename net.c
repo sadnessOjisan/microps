@@ -10,13 +10,19 @@
 
 /* NOTE: if you want to add/delete the entries after net_run(), you need to protect these lists with a mutex. */
 // Q: この static なに？
-static struct net_device *devices;
+// 翻訳単位を跨ぐと参照できないけど、staticあればできる
+// 外部リンケージ/内部リンケージ
+// 一つの翻訳単位で一意
+static struct net_device *devices; // static がついていると内部リンケージ&global
+// storage class specifier = auto, register, static, extern
+// storage duration(global/local), linkage(内部・外部)のマトリクスで４パターンある
 
 /**
  * net_device 構造体を作って、memory_alloc で割り当てる
  * 割り当てたらそのまま net_device を返す
  * 割り当てれなかったらエラー出力とNULLを返す
  * Q: 構造体のゼロ値はなに？
+ * A: んなものはない
  */
 struct net_device *
 net_device_alloc(void)
@@ -40,7 +46,6 @@ int net_device_register(struct net_device *dev)
     dev->index = index++;
     snprintf(dev->name, sizeof(dev->name), "net%d", dev->index);
 
-    // Q: どうしてデバイスリストの先頭への追加になるのこれ？
     dev->next = devices;
     devices = dev;
     infof("registered, dev=%s, type=0x%04x", dev->name, dev->type);
@@ -63,7 +68,6 @@ net_device_open(struct net_device *dev)
             return -1;
         }
     }
-    // Q: フラグの立て方知りたい
     dev->flags |= NET_DEVICE_FLAG_UP;
     infof("dev=%s, state=%s", dev->name, NET_DEVICE_STATE(dev));
     return 0;
@@ -124,7 +128,6 @@ int net_run(void)
     struct net_device *dev;
 
     debugf("open all devices...");
-    // Q: イテレータみを感じる for だけど、何か構文ある？
     for (dev = devices; dev; dev = dev->next)
     {
         net_device_open(dev);
