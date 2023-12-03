@@ -7,6 +7,7 @@ OBJS = util.o \
 
 TESTS = test/step0.exe \
         test/step1.exe \
+        test/step2.exe \
 
 # 外から与えられているものによるのでdefaultの規格。外部に依存する。
 # -std=c99 のようなものがあった方が良い
@@ -16,6 +17,7 @@ ifeq ($(shell uname),Linux)
   # Linux specific settings
   BASE = platform/linux
   CFLAGS := $(CFLAGS) -pthread -iquote $(BASE)
+  OBJS := $(OBJS) $(BASE)/intr.o
 endif
 
 ifeq ($(shell uname),Darwin)
