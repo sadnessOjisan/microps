@@ -9,6 +9,7 @@
 
 #include "test.h"
 
+// memo: C言語における volatile というキーワードは、コンパイラに対して特定の変数が予期せぬ方法で変更される可能性があることを示すために使用されます。
 static volatile sig_atomic_t terminate;
 
 static void

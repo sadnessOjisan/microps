@@ -52,6 +52,7 @@ struct net_device_ops
 {
     int (*open)(struct net_device *dev);
     int (*close)(struct net_device *dev);
+    // driver の transmit 関数
     int (*transmit)(struct net_device *dev, uint16_t type, const uint8_t *data, size_t len, const void *dst);
 };
 

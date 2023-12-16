@@ -88,6 +88,7 @@ static struct net_device_ops loopback_ops = {
     .transmit = loopback_transmit,
 };
 
+// ループバックデバイスの初期化
 struct net_device *
 loopback_init(void)
 {
