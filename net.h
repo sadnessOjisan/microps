@@ -20,9 +20,13 @@
 
 #define NET_DEVICE_ADDR_LEN 16
 
-// Q: この flags & はどういう役割？
 #define NET_DEVICE_IS_UP(x) ((x)->flags & NET_DEVICE_FLAG_UP)
 #define NET_DEVICE_STATE(x) (NET_DEVICE_IS_UP(x) ? "up" : "down")
+
+/* NOTE: use same value as the Ethernet types */
+#define NET_PROTOCOL_TYPE_IP 0x0800
+#define NET_PROTOCOL_TYPE_ARP 0x0806
+#define NTT_PROTOCOL_TYPE_IPV6 0x86dd
 
 struct net_device
 {
@@ -44,7 +48,6 @@ struct net_device
     void *priv;
 };
 
-// Q: 構造体に関数を登録する方法を調べる
 struct net_device_ops
 {
     int (*open)(struct net_device *dev);
@@ -58,6 +61,9 @@ extern int
 net_device_register(struct net_device *dev);
 extern int
 net_device_output(struct net_device *dev, uint16_t type, const uint8_t *data, size_t len, const void *dst);
+
+extern int
+net_protocol_register(uint16_t type, void (*handler)(const uint8_t *data, size_t len, struct net_device *dev));
 
 extern int
 net_input_handler(uint16_t type, const uint8_t *data, size_t len, struct net_device *dev);

@@ -1,21 +1,38 @@
-
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "platform.h"
 
 #include "util.h"
 #include "net.h"
 
+struct net_protocol
+{
+    struct net_protocol *next;
+    uint16_t type;
+    struct queue_head queue; /* input queue */
+    void (*handler)(const uint8_t *data, size_t len, struct net_device *dev);
+};
+
+struct net_protocol_queue_entry
+{
+    struct net_device *dev;
+    size_t len;
+    uint8_t data[];
+};
+
 /* NOTE: if you want to add/delete the entries after net_run(), you need to protect these lists with a mutex. */
 // Q: この static なに？
 // 翻訳単位を跨ぐと参照できないけど、staticあればできる
 // 外部リンケージ/内部リンケージ
 // 一つの翻訳単位で一意
-static struct net_device *devices; // static がついていると内部リンケージ&global
+static struct net_device *devices;
 // storage class specifier = auto, register, static, extern
 // storage duration(global/local), linkage(内部・外部)のマトリクスで４パターンある
+
+static struct net_protocol *protocols;
 
 /**
  * net_device 構造体を作って、memory_alloc で割り当てる
@@ -45,7 +62,6 @@ int net_device_register(struct net_device *dev)
 
     dev->index = index++;
     snprintf(dev->name, sizeof(dev->name), "net%d", dev->index);
-
     dev->next = devices;
     devices = dev;
     infof("registered, dev=%s, type=0x%04x", dev->name, dev->type);
@@ -116,10 +132,13 @@ int net_device_output(struct net_device *dev, uint16_t type, const uint8_t *data
     return 0;
 }
 
+/* NOTE: must not be call after net_run() */
+int net_protocol_register(uint16_t type, void (*handler)(const uint8_t *data, size_t len, struct net_device *dev))
+{
+}
+
 int net_input_handler(uint16_t type, const uint8_t *data, size_t len, struct net_device *dev)
 {
-    debugf("dev=%s, type=0x%04x, len=%zu", dev->name, type, len);
-    debugdump(data, len);
     return 0;
 }
 
@@ -132,7 +151,6 @@ int net_run(void)
         errorf("intr_run() failure");
         return -1;
     }
-
     debugf("open all devices...");
     for (dev = devices; dev; dev = dev->next)
     {
@@ -145,6 +163,7 @@ int net_run(void)
 void net_shutdown(void)
 {
     struct net_device *dev;
+
     debugf("close all devices...");
     for (dev = devices; dev; dev = dev->next)
     {
@@ -161,7 +180,6 @@ int net_init(void)
         errorf("intr_init() failure");
         return -1;
     }
-
     infof("initialized");
     return 0;
 }

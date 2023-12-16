@@ -11,6 +11,7 @@
 
 #define DUMMY_IRQ INTR_IRQ_BASE
 
+static int
 dummy_transmit(struct net_device *dev, uint16_t type, const uint8_t *data, size_t len, const void *dst)
 {
     debugf("dev=%s, type=0x%04x, len=%zu", dev->name, type, len);
@@ -28,7 +29,6 @@ dummy_isr(unsigned int irq, void *id)
 }
 
 static struct net_device_ops dummy_ops = {
-    // Q: open/closeは定義しなくて良いの？
     .transmit = dummy_transmit,
 };
 

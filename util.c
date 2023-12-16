@@ -12,6 +12,7 @@
 #include "platform.h"
 
 #include "util.h"
+
 /*
  * Logging
  */
